@@ -66,7 +66,7 @@ def YIQtoRGB(original_image):
             # print(Y, I, Q)
             # print(R, G, B)
 
-    return rgb_image
+    return rgb_image.astype(np.uint8)
 
 
 def negative(original_image):
