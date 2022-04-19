@@ -1,8 +1,8 @@
-from math import ceil
+# Digital Image Processing Functions Module
+# dimgprocessing-module.py
+
 from skimage import io, data, color
 from matplotlib import pyplot as plt
-import os
-import copy
 import numpy as np
 
 
@@ -86,53 +86,23 @@ def negative(original_image):
     return negative_image
 
 
-def show_result_plot(original_image, negative_image, yiq_image, rgb_image):
-    #  PLOT CONFIG: 1 row X 2 column
-    n_row, n_col = 1, 4
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+def show_result_plot(images_dict):
+
+    number_of_images = len(images_dict)
+    n_row, n_col = 1, number_of_images
+
+    # PLOT CONFIG
+    fig, axs = plt.subplots(
         n_row, n_col, constrained_layout=True)
 
-    ax1.set_title('Original Image')
-    ax1.imshow(original_image)
+    images_names_list = list(images_dict.keys())
 
-    ax2.set_title("Negative Image")
-    ax2.imshow(negative_image)
+    for i in range(number_of_images):
+        image_name = images_names_list[i]
+        matrix = images_dict[image_name]
 
-    ax3.set_title("YIQ Image")
-    ax3.imshow(yiq_image)
+        axs[i].set_title(image_name)
+        axs[i].imshow(matrix)
 
-    ax4.set_title("RGB Image")
-    ax4.imshow(rgb_image)
-
-    fig.canvas.manager.set_window_title('3. Negative Image Algorithm')
+    fig.canvas.manager.set_window_title('Results')
     plt.show()
-
-
-# main (tirar daqui)
-# filename = os.path.join('', 'red.png')
-filename = os.path.join('', 'yiq-test.png')
-
-original_image = io.imread(filename)
-
-# print('Convertendo para o espaço de cores YIQ')
-yiq_image = RGBtoYIQ(original_image)
-
-rgb_image = YIQtoRGB(yiq_image)
-
-# print('Gerando o negativo da imagem')
-negative_image = negative(original_image)
-
-print("Original Image\n", original_image[0][0], "\n")
-print("YIQ Image\n", yiq_image[0][0], "\n")
-print("RGB Image\n", rgb_image[0][0], "\n")
-# print("Negative Image\n", negative_image[0][0], "\n")
-
-
-if(np.array_equal(original_image, rgb_image)):
-    print('sucess')
-else:
-    print('failure')
-
-
-show_result_plot(original_image, negative_image,
-                 yiq_image, rgb_image)
