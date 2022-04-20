@@ -4,9 +4,10 @@
 from skimage import io, data, color
 from matplotlib import pyplot as plt
 import numpy as np
+from colorama import Fore, Style
 
 
-def RGBtoYIQ(original_image):
+def RGBtoYIQ(original_image, mode='yiq'):
     # print('Convertendo para o espaço de cores YIQ')
 
     num_rows = original_image.shape[0]
@@ -25,16 +26,12 @@ def RGBtoYIQ(original_image):
             Q = 0.211*R - 0.523*G + 0.312*B
 
             yiq_image[i][j] = [Y, I, Q]
-            # print(I)
-            # print("test:", yiq_image[i][j])
 
-            # yiq_image[i][j] = [Y, Y, Y]
-            # yiq_image[i][j] = [I, I, I]
-            # yiq_image[i][j] = [Q, Q, Q]
-
-            # print(R, G, B)
-            # print(Y, I, Q)
-            # exit()
+            # for Y test
+            if (mode == 'y'):
+                print('Usar somente em propósito de testes da banda Y.')
+                yiq_image[i][j] = [Y, Y, Y]
+                yiq_image = yiq_image.astype(np.uint8)
 
     return yiq_image
 
@@ -69,7 +66,7 @@ def YIQtoRGB(original_image):
     return rgb_image.astype(np.uint8)
 
 
-def negative(original_image):
+def negative(original_image, mode='rgb'):
     """Filtro para interver a cor, isto é, gerar o
        negativo das imagens.
 
@@ -81,6 +78,26 @@ def negative(original_image):
     """
 
     L = pow(2, 8)  # 256
+
+    if (mode == 'yiq'):
+        print('Gerando Negativo somente na banda Y.')
+
+        num_rows = original_image.shape[0]
+        num_columns = original_image.shape[1]
+
+        yiq_negative_image = np.empty([num_rows, num_columns, 3])
+
+        for i in range(num_rows):
+            for j in range(num_columns):
+
+                [Y, I, Q] = original_image[i][j]
+
+                Y_final = (L - 1) - Y
+
+                yiq_negative_image[i][j] = [Y_final, I, Q]
+
+        return yiq_negative_image
+
     negative_image = (L - 1) - original_image
 
     return negative_image
@@ -94,6 +111,13 @@ def show_result_plot(images_dict):
     # PLOT CONFIG
     fig, axs = plt.subplots(
         n_row, n_col, constrained_layout=True)
+
+    if (type(axs) != np.ndarray):
+        print(
+            f'{Fore.RED}ALERT:{Style.RESET_ALL}'
+            ' Exiba pelo menos 2 images (a original e a de saída)'
+            ' para visualizar os resultados.')
+        exit()
 
     images_names_list = list(images_dict.keys())
 
