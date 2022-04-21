@@ -22,6 +22,9 @@ n = box_mask.shape[1]
 initial_i = int((m - 1)/2)
 initial_j = int((n - 1)/2)
 
+
+g = []
+
 for i in range(initial_i, image.shape[0]):
     for j in range(initial_j, image.shape[1]):
 
@@ -33,10 +36,40 @@ for i in range(initial_i, image.shape[0]):
                 [image[i+1][j-1], image[i+1][j], image[i+1][j+1]]
             ])
 
+            print('V (', i, ',', j, ') =',
+                  v[initial_i][initial_j])
             print(v)
 
-            print('V(i,j) = ', v[i][j])
+            # g[i][j] = [v[initial_i][initial_j], 100, 100]
+            g.append([v[initial_i][initial_j], 100, 100])
 
         except:
 
-            print('________________________________')
+            print('> sem extensão por zero.')
+
+
+print('------------------------')
+# print(g.shape)
+print(g)
+
+num_rows = image.shape[0]
+num_columns = image.shape[1]
+
+g_array = np.empty([num_rows - 2*initial_i, num_columns - 2*initial_j, 3])
+print(g_array)
+print(g_array.shape)
+
+k = 0
+for i in range(g_array.shape[0]):
+    for j in range(g_array.shape[1]):
+        g_array[i][j] = g[k]
+        k += 1
+
+
+# Pixel a pixel da imagem de entrada
+# for i in range(image.shape[0]):
+#     for j in range(image.shape[1]):
+
+#         if (v.shape()[0] == m and v.shape()[1] == n):
+#             print('Calculate Frobenius')
+#             print(v)

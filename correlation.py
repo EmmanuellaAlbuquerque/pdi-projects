@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from skimage import io, data, color
+from dimgprocessing_module import show_result_plot
 
 # Carregando imagem de entrada
 filename = os.path.join('', 'correlation_test.png')
@@ -63,32 +64,10 @@ initial_j = int((n - 1)/2)
 num_rows = image.shape[0]
 num_columns = image.shape[1]
 # g = np.empty([num_rows, num_columns])
-g = np.empty([num_rows, num_columns, 3])
-g.fill(-1)
-# print(g)
+g = []
 
 for i in range(initial_i, image.shape[0]):
     for j in range(initial_j, image.shape[1]):
-
-        # print('( ' + str(i-1), ',', str(j-1), ')', '=>', image[i-1][j-1])
-        # print('( ' + str(i-1), ',', str(j), ')', '=>', image[i-1][j])
-        # print('( ' + str(i-1), ',', str(j+1), ')', '=>', image[i-1][j+1])
-        # print('( ' + str(i), ',', str(j-1), ')', '=>', image[i][j-1])
-        # print('( ' + str(i), ',', str(j), ')', '=>', image[i][j])
-        # print('( ' + str(i), ',', str(j+1), ')', '=>', image[i][j+1])
-        # print('( ' + str(i+1), ',', str(j-1), ')', '=>', image[i+1][j-1])
-        # print('( ' + str(i+1), ',', str(j), ')', '=>', image[i+1][j])
-        # print('( ' + str(i+1), ',', str(j+1), ')', '=>', image[i+1][j+1])
-
-        # print('( ' + str(i-1), ',', str(j-1), ')')
-        # print('( ' + str(i-1), ',', str(j), ')')
-        # print('( ' + str(i-1), ',', str(j+1), ')')
-        # print('( ' + str(i), ',', str(j-1), ')')
-        # print('( ' + str(i), ',', str(j), ')')
-        # print('( ' + str(i), ',', str(j+1), ')')
-        # print('( ' + str(i+1), ',', str(j-1), ')')
-        # print('( ' + str(i+1), ',', str(j), ')')
-        # print('( ' + str(i+1), ',', str(j+1), ')')
 
         try:
             # Vizinhança v(i,j)
@@ -98,16 +77,14 @@ for i in range(initial_i, image.shape[0]):
                 [image[i+1][j-1], image[i+1][j], image[i+1][j+1]]
             ])
 
-            print(v)
-
-            print('V(i,j) = ', v[i][j])
+            # print('V(i,j) = ', v[i][j])
 
             R_correlation_sum = 0
             G_correlation_sum = 0
             B_correlation_sum = 0
             for i in range(v.shape[0]):
-                print("v:\n", v[i], "\n")
-                print("box_mask:\n", box_mask[i], "\n")
+                # print("v:\n", v[i], "\n")
+                # print("box_mask:\n", box_mask[i], "\n")
 
                 R_band_V = np.empty([len(v[i])])
                 R_band_V.fill(-1)
@@ -119,30 +96,56 @@ for i in range(initial_i, image.shape[0]):
                 B_band_V.fill(-1)
 
                 for pixel in range(len(v[i])):
-                    print('pixel:', pixel)
+                    # print('pixel:', pixel)
 
                     R_band_V[pixel] = v[i][pixel][0]
                     G_band_V[pixel] = v[i][pixel][1]
                     B_band_V[pixel] = v[i][pixel][2]
 
-                print(R_band_V)
-                print(G_band_V)
-                print(B_band_V)
+                # print(R_band_V)
+                # print(G_band_V)
+                # print(B_band_V)
                 R_correlation_sum += np.inner(R_band_V, box_mask[i])
                 G_correlation_sum += np.inner(G_band_V, box_mask[i])
                 B_correlation_sum += np.inner(B_band_V, box_mask[i])
 
-            print(g[i][j])
-            g[i][j] = [R_correlation_sum, G_correlation_sum, B_correlation_sum]
-            print(g[i][j])
+            # print(g[i][j])
+            # g[i][j] = [R_correlation_sum, G_correlation_sum, B_correlation_sum]
+            g.append([round(R_correlation_sum), round(
+                G_correlation_sum), round(B_correlation_sum)])
+            # print(g[i][j])
 
         except:
-            g = g[g != -1]
-            print('________________________________')
-            print(g)
+            # print('> sem extensão por zero.')
+            f = 1
 
-            exit()
 
+print(image.shape)
+
+g_array = np.empty([num_rows - 2*initial_i, num_columns - 2*initial_j, 3])
+# print(g_array)
+# print(g.shape)
+print(g_array.shape)
+
+k = 0
+for i in range(g_array.shape[0]):
+    for j in range(g_array.shape[1]):
+        g_array[i][j] = g[k]
+        k += 1
+
+# print(g_array)
+
+for i in range(3):
+    for j in range(3):
+        print('Image =>', image[i][j])
+
+print('G =>', g_array[0][0])
+
+# Exibindo os resultados
+# show_result_plot({
+#     "Original Image": image,
+#     "Box Filter Image": g_array.astype(np.uint8)
+# })
 
 # v = np.empty([m, n])
 
