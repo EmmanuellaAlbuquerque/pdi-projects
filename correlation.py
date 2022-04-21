@@ -1,4 +1,12 @@
 import numpy as np
+import os
+from skimage import io, data, color
+
+# Carregando imagem de entrada
+filename = os.path.join('', 'correlation_test.png')
+image = io.imread(filename)
+
+# print(original_image.shape)
 
 # image = np.array([[[249, 249, 249],
 #                    [249, 249, 249],
@@ -12,11 +20,25 @@ import numpy as np
 #                    [249, 249, 249],
 #                    [249, 249, 249]]])
 
-image = np.array([
-    [249, 249, 249],
-    [5, 249, 249],
-    [249, 249, 249]
-])
+# print(image.shape)
+
+# image = np.array([[[5, 5, 1],
+#                    [2, 2, 1],
+#                    [3, 3, 1]],
+
+#                   [[10, 10, 2],
+#                    [20, 20, 2],
+#                    [30, 30, 2]],
+
+#                   [[100, 100, 3],
+#                    [200, 200, 3],
+#                    [300, 300, 3]]])
+
+# image = np.array([
+#     [249, 249, 249],
+#     [5, 249, 249],
+#     [249, 249, 249]
+# ])
 
 # Filtro Box
 box_mask = np.array([
@@ -40,8 +62,8 @@ initial_j = int((n - 1)/2)
 # - primeira linha - ultima linha
 num_rows = image.shape[0]
 num_columns = image.shape[1]
-g = np.empty([num_rows, num_columns])
-# g = np.empty([num_rows, num_columns, 3])
+# g = np.empty([num_rows, num_columns])
+g = np.empty([num_rows, num_columns, 3])
 g.fill(-1)
 # print(g)
 
@@ -78,13 +100,41 @@ for i in range(initial_i, image.shape[0]):
 
             print(v)
 
-            correlation_sum = 0
-            for i in range(image.shape[0]):
-                # print("image:\n", image[i], "\n")
-                # print("box_mask:\n", box_mask[i], "\n")
-                correlation_sum += np.inner(image[i], box_mask[i])
+            print('V(i,j) = ', v[i][j])
 
-            g[i][j] = correlation_sum
+            R_correlation_sum = 0
+            G_correlation_sum = 0
+            B_correlation_sum = 0
+            for i in range(v.shape[0]):
+                print("v:\n", v[i], "\n")
+                print("box_mask:\n", box_mask[i], "\n")
+
+                R_band_V = np.empty([len(v[i])])
+                R_band_V.fill(-1)
+
+                G_band_V = np.empty([len(v[i])])
+                G_band_V.fill(-1)
+
+                B_band_V = np.empty([len(v[i])])
+                B_band_V.fill(-1)
+
+                for pixel in range(len(v[i])):
+                    print('pixel:', pixel)
+
+                    R_band_V[pixel] = v[i][pixel][0]
+                    G_band_V[pixel] = v[i][pixel][1]
+                    B_band_V[pixel] = v[i][pixel][2]
+
+                print(R_band_V)
+                print(G_band_V)
+                print(B_band_V)
+                R_correlation_sum += np.inner(R_band_V, box_mask[i])
+                G_correlation_sum += np.inner(G_band_V, box_mask[i])
+                B_correlation_sum += np.inner(B_band_V, box_mask[i])
+
+            print(g[i][j])
+            g[i][j] = [R_correlation_sum, G_correlation_sum, B_correlation_sum]
+            print(g[i][j])
 
         except:
             g = g[g != -1]
