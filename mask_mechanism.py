@@ -3,12 +3,18 @@
 import numpy as np
 
 image = np.array([
+    [255, 255, 255, 255, 255],
+    [255, 255, 255, 255, 255],
     [0, 0, 0, 0, 0],
-    [0, 16, 20, 10, 0],
-    [0, 4, 4, 4, 0],
-    [0, 2, 8, 5, 0],
-    [0, 0, 0, 0, 0]
+    [255, 2, 8, 255, 255],
+    [255, 255, 255, 255, 255]
 ])
+
+# image = np.array([
+#     [249, 249, 249],
+#     [5, 249, 249],
+#     [249, 249, 249]
+# ])
 
 box_mask = np.array([
     [1/9, 1/9, 1/9],
@@ -40,8 +46,11 @@ for i in range(initial_i, image.shape[0]):
                   v[initial_i][initial_j])
             print(v)
 
-            # g[i][j] = [v[initial_i][initial_j], 100, 100]
-            g.append([v[initial_i][initial_j], 100, 100])
+            correlation_sum = 0
+            for i in range(len(v)):
+                correlation_sum += np.inner(v[i], box_mask[i])
+
+            g.append(correlation_sum)
 
         except:
 
@@ -56,8 +65,6 @@ num_rows = image.shape[0]
 num_columns = image.shape[1]
 
 g_array = np.empty([num_rows - 2*initial_i, num_columns - 2*initial_j, 3])
-print(g_array)
-print(g_array.shape)
 
 k = 0
 for i in range(g_array.shape[0]):
@@ -65,6 +72,8 @@ for i in range(g_array.shape[0]):
         g_array[i][j] = g[k]
         k += 1
 
+print(g_array)
+print(g_array.shape)
 
 # Pixel a pixel da imagem de entrada
 # for i in range(image.shape[0]):
