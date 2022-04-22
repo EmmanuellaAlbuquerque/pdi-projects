@@ -9,7 +9,11 @@ import sys
 # filename = os.path.join('', 'black-line-center.png')
 # filename = os.path.join('', 'yiq-test.png')
 # filename = os.path.join('', 'correlation_test.png')
-filename = os.path.join('', 'julian.jpg')
+# filename = os.path.join('', 'julian.jpg')
+# filename = os.path.join('', 'sobel.png')
+# filename = os.path.join('', '20191126093552.jpg')
+filename = os.path.join('', 'chimney.png')
+
 image = io.imread(filename)
 
 if (len(image.shape) != 3):
@@ -55,16 +59,28 @@ if (len(image.shape) != 3):
 # box_mask = np.array([[1/25]*5]*5)
 # box_mask = np.array([[1/49]*7]*7)
 # box_mask = np.array([[1/225]*15]*15)
-box_mask = np.array([[1/2401]*49]*49)
+# box_mask = np.array([[1/2401]*49]*49)
 
-mask = box_mask
+sobel_mask_horizontal = np.array([
+    [-1, -2, -1],
+    [0, 0, 0],
+    [1, 2, 1]
+])
+
+sobel_mask_vertical = np.array([
+    [-1, 0, 1],
+    [-2, 0, 2],
+    [-1, 0, 1]
+])
+
+mask = sobel_mask_horizontal
 
 # print(box_mask)
 # print(box_mask.shape)
 # exit()
 
-m = box_mask.shape[0]
-n = box_mask.shape[1]
+m = mask.shape[0]
+n = mask.shape[1]
 
 # A máscara desliza sobre a imagem de entrada
 
@@ -134,8 +150,6 @@ for i in range(initial_i, image.shape[0]):
             G_correlation_sum = 0
             B_correlation_sum = 0
             for v_index in range(v.shape[0]):
-                # print("v:\n", v[i], "\n")
-                # print("box_mask:\n", box_mask[i], "\n")
 
                 R_band_V = np.empty([len(v[v_index])])
                 R_band_V.fill(-1)
@@ -157,10 +171,26 @@ for i in range(initial_i, image.shape[0]):
                 # print(R_band_V)
                 # print(G_band_V)
                 # print(B_band_V)
-                R_correlation_sum += np.inner(R_band_V, box_mask[v_index])
-                G_correlation_sum += np.inner(G_band_V, box_mask[v_index])
-                B_correlation_sum += np.inner(B_band_V, box_mask[v_index])
+                R_correlation_sum += np.inner(R_band_V, mask[v_index])
+                G_correlation_sum += np.inner(G_band_V, mask[v_index])
+                B_correlation_sum += np.inner(B_band_V, mask[v_index])
 
+            # print("v:\n", v[i], "\n")
+            # print("mask:\n", mask[i], "\n")
+            # print([R_correlation_sum, G_correlation_sum, B_correlation_sum])
+
+            if (R_correlation_sum == 0):
+                R_correlation_sum = 255
+
+            if (G_correlation_sum == 0):
+                G_correlation_sum = 255
+
+            if (B_correlation_sum == 0):
+                B_correlation_sum = 255
+
+            # print([R_correlation_sum, G_correlation_sum, B_correlation_sum])
+
+            # exit()
             # print(g[i][j])
             # g[i][j] = [R_correlation_sum, G_correlation_sum, B_correlation_sum]
             g.append([round(R_correlation_sum), round(
@@ -200,7 +230,8 @@ for i in range(g_array.shape[0]):
 # Exibindo os resultados
 show_result_plot({
     "Original Image": image,
-    "Box Filter Image": g_array.astype(np.uint8)
+    # "Box Filter Image": g_array.astype(np.uint8)
+    "Sobel Filter Image": g_array.astype(np.uint8)
 })
 
 # v = np.empty([m, n])
