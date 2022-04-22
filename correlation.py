@@ -94,8 +94,6 @@ for i in range(initial_i, image.shape[0]):
                     [j], image[i+2][j+1], image[i+2][j+2]]
             ])
 
-            # print(v)
-
             # print('V(i,j) = ', v[i][j])
 
             R_correlation_sum = 0
