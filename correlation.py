@@ -1,13 +1,20 @@
+from tracemalloc import stop
 import numpy as np
 import os
 from skimage import io, data, color
 from dimgprocessing_module import show_result_plot
+import sys
 
 # Carregando imagem de entrada
 # filename = os.path.join('', 'black-line-center.png')
 # filename = os.path.join('', 'yiq-test.png')
-filename = os.path.join('', 'correlation_test.png')
+# filename = os.path.join('', 'correlation_test.png')
+filename = os.path.join('', 'julian.jpg')
 image = io.imread(filename)
+
+if (len(image.shape) != 3):
+    print('Binary image')
+    image = color.gray2rgb(image)
 
 # print(original_image.shape)
 
@@ -45,9 +52,12 @@ image = io.imread(filename)
 
 # Filtro Box
 # box_mask = np.array([[1/9]*3]*3)
-box_mask = np.array([[1/25]*5]*5)
+# box_mask = np.array([[1/25]*5]*5)
 # box_mask = np.array([[1/49]*7]*7)
 # box_mask = np.array([[1/225]*15]*15)
+box_mask = np.array([[1/2401]*49]*49)
+
+mask = box_mask
 
 # print(box_mask)
 # print(box_mask.shape)
@@ -81,18 +91,42 @@ for i in range(initial_i, image.shape[0]):
             #     [image[i][j-1], image[i][j], image[i][j+1]],
             #     [image[i+1][j-1], image[i+1][j], image[i+1][j+1]]
             # ])
-            v = np.array([
-                [image[i-2][j-2], image[i-2][j-1], image[i-2]
-                    [j], image[i-2][j+1], image[i-2][j+2]],
-                [image[i-1][j-2], image[i-1][j-1], image[i-1]
-                    [j], image[i-1][j+1], image[i-1][j+2]],
-                [image[i][j-2], image[i][j-1], image[i]
-                    [j], image[i][j+1], image[i][j+2]],
-                [image[i+1][j-2], image[i+1][j-1], image[i+1]
-                    [j], image[i+1][j+1], image[i+1][j+2]],
-                [image[i+2][j-2], image[i+2][j-1], image[i+2]
-                    [j], image[i+2][j+1], image[i+2][j+2]]
-            ])
+            # v = np.array([
+            #     [image[i-2][j-2], image[i-2][j-1], image[i-2]
+            #         [j], image[i-2][j+1], image[i-2][j+2]],
+            #     [image[i-1][j-2], image[i-1][j-1], image[i-1]
+            #         [j], image[i-1][j+1], image[i-1][j+2]],
+            #     [image[i][j-2], image[i][j-1], image[i]
+            #         [j], image[i][j+1], image[i][j+2]],
+            #     [image[i+1][j-2], image[i+1][j-1], image[i+1]
+            #         [j], image[i+1][j+1], image[i+1][j+2]],
+            #     [image[i+2][j-2], image[i+2][j-1], image[i+2]
+            #         [j], image[i+2][j+1], image[i+2][j+2]]
+            # ])
+            neighborhood_list = []
+            for row in range(-initial_i, initial_i+1, 1):
+                for column in range(-initial_j, initial_j+1, 1):
+
+                    # print('i, j:', row, column)
+                    neighborhood_list.append(image[i+row][j+column])
+
+            # print(i, j, len(neighborhood_list))
+
+            rows = mask.shape[0]
+            columns = mask.shape[1]
+
+            v = np.empty([rows, columns, 3])
+            # print(v.shape)
+
+            k = 0
+            for q in range(v.shape[0]):
+                for w in range(v.shape[1]):
+
+                    v[q][w] = neighborhood_list[k]
+                    k += 1
+
+            # print('V:', v)
+            # print('v-shape:', v.shape)
 
             # print('V(i,j) = ', v[i][j])
 
@@ -132,16 +166,20 @@ for i in range(initial_i, image.shape[0]):
             g.append([round(R_correlation_sum), round(
                 G_correlation_sum), round(B_correlation_sum)])
 
-        except:
+        except IndexError:
             # print('> sem extensão por zero.')
-            f = 1
+            continue
+
+        except BaseException as err:
+            print(f"Unexpected {err=}, {type(err)=}")
+            raise
 
 
 print(image.shape)
 
 g_array = np.empty([num_rows - 2*initial_i, num_columns - 2*initial_j, 3])
 # print(g)
-# print(g.shape)
+# print(len(g))
 print(g_array.shape)
 
 k = 0

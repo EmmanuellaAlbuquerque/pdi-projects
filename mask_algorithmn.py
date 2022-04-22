@@ -70,13 +70,13 @@ print(neighborhood_list)
 num_rows = mask.shape[0]
 num_columns = mask.shape[1]
 
-g_array = np.empty([num_rows, num_columns])
+v_array = np.empty([num_rows, num_columns])
 
 k = 0
 for i in range(mask.shape[0]):
     for j in range(mask.shape[1]):
-        g_array[i][j] = neighborhood_list[k]
+        v_array[i][j] = neighborhood_list[k]
         k += 1
 
-print(g_array)
-print(g_array.shape)
+print(v_array)
+print(v_array.shape)
