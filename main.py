@@ -3,6 +3,7 @@
 
 import os
 from skimage import io, data, color
+from correlation import Correlation
 from dimgprocessing_module import RGBtoYIQ, YIQtoRGB, negative, show_result_plot
 import numpy as np
 from colorama import Fore, Style
@@ -62,3 +63,65 @@ original_image = io.imread(filename)
 #     "Original Image": original_image,
 #     "(Y)IQ Negative Image RGB": rgb_image,
 # })
+
+# 3.
+
+# Carregando imagem de entrada
+# filename = os.path.join('', 'black-line-center.png')
+# filename = os.path.join('', 'yiq-test.png')
+# filename = os.path.join('', 'correlation_test.png')
+# filename = os.path.join('', 'julian.jpg')
+# filename = os.path.join('', 'sobel.png')
+# filename = os.path.join('', '20191126093552.jpg')
+# filename = os.path.join('', 'chimney.png')
+filename = os.path.join('', 'apple.png')
+
+image = io.imread(filename)
+
+if (len(image.shape) != 3):
+    print('Binary image')
+    image = color.gray2rgb(image)
+
+
+# -------------------- Definição da máscara usada --------------------
+
+# Filtro Box
+# box_mask = np.array([[1/9]*3]*3)
+# box_mask = np.array([[1/25]*5]*5)
+# box_mask = np.array([[1/49]*7]*7)
+# box_mask = np.array([[1/225]*15]*15)
+# box_mask = np.array([[1/2401]*49]*49)
+
+sobel_mask_horizontal = np.array([
+    [-1, -2, -1],
+    [0, 0, 0],
+    [1, 2, 1]
+])
+
+sobel_mask_vertical = np.array([
+    [-1, 0, 1],
+    [-2, 0, 2],
+    [-1, 0, 1]
+])
+
+mask = sobel_mask_vertical
+
+# -------------------------------------------------------
+
+
+# separado nas bandas rgb
+
+
+# pivot
+# def calculateCorrelation(image, mask, offset=0):
+
+# correlation = Correlation(image, mask, filter_type='median')
+correlation = Correlation(image, mask)
+g_array = correlation.calculate()
+
+# Exibindo os resultados
+show_result_plot({
+    "Imagem Original": image,
+    # "Box Filter Image": g_array.astype(np.uint8)
+    "Filtro Média (Box) 49x49": g_array.astype(np.uint8)
+})
