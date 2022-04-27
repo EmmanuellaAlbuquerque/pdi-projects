@@ -1,8 +1,7 @@
+# Correlation Class Module of Digital Image Processing
+# correlation.py
 
 import numpy as np
-import os
-from skimage import io, color
-from dimgprocessing_module import show_result_plot
 
 
 class Correlation:
@@ -27,29 +26,52 @@ class Correlation:
 
         self.g = []
 
+        self.R_neighborhood = []
+        self.G_neighborhood = []
+        self.B_neighborhood = []
+
     def setNeighborhood(self, actual_i, actual_j):
-        R_neighborhood = []
-        G_neighborhood = []
-        B_neighborhood = []
+        self.R_neighborhood = []
+        self.G_neighborhood = []
+        self.B_neighborhood = []
 
         # Definindo vizinhança de acordo com a tamanho da máscara
-        for row in range(-self.central_mask_pixel_i, self.central_mask_pixel_i+1, 1):
-            for column in range(-self.central_mask_pixel_j, self.central_mask_pixel_j+1, 1):
+        for row_index in range(-self.central_mask_pixel_i, self.central_mask_pixel_i+1, 1):
+            for column_index in range(-self.central_mask_pixel_j, self.central_mask_pixel_j+1, 1):
 
-                pixel_rgb = self.image[actual_i+row][actual_j+column]
-                [R, G, B] = pixel_rgb
+                try:
+                    # print([actual_i + row_index], [actual_j+column_index])
+                    if ((actual_i + row_index) < 0 or (actual_j+column_index) < 0):
+                        raise IndexError
 
-                R_neighborhood.append(R)
-                G_neighborhood.append(G)
-                B_neighborhood.append(B)
+                    pixel_rgb = self.image[actual_i +
+                                           row_index][actual_j+column_index]
+                    [R, G, B] = pixel_rgb
 
-        return [R_neighborhood, G_neighborhood, B_neighborhood]
+                    self.R_neighborhood.append(R)
+                    self.G_neighborhood.append(G)
+                    self.B_neighborhood.append(B)
+                    # print(self.R_neighborhood)
+                    # exit()
+
+                except IndexError:
+                    # print('> sem extensão por zero.')
+                    self.R_neighborhood.append(0)
+                    self.G_neighborhood.append(0)
+                    self.B_neighborhood.append(0)
+                    # print(self.R_neighborhood)
+                    # exit()
+                    continue
+
+        # print(self.R_neighborhood)
+        # exit()
+        return [self.R_neighborhood, self.G_neighborhood, self.B_neighborhood]
 
     def calculate(self):
         # A máscara desliza sobre a imagem de entrada
         # Pixel a pixel da imagem de entrada
-        for i in range(self.central_mask_pixel_i, self.final_i):
-            for j in range(self.central_mask_pixel_j, self.final_j):
+        for i in range(0, self.num_rows_image):
+            for j in range(0, self.num_columns_image):
 
                 try:
 
@@ -64,10 +86,6 @@ class Correlation:
                         G_neighborhood,
                         B_neighborhood)
 
-                except IndexError:
-                    # print('> sem extensão por zero.')
-                    continue
-
                 except BaseException as err:
                     print(f"Unexpected {err=}, {type(err)=}")
                     raise
@@ -81,6 +99,15 @@ class Correlation:
                  round(np.median(G_neighborhood)),
                  round(np.median(B_neighborhood))
                  ])
+        elif (self.filter == 'yiq-median'):
+            # print('yiq-median')
+            self.g.append(
+                [
+                    np.median(R_neighborhood),
+                    np.median(G_neighborhood),
+                    np.median(B_neighborhood)
+                ])
+
         else:
 
             # Vizinhança v(i,j) => R(i,j), G(i,j), B(i,j)
@@ -93,12 +120,12 @@ class Correlation:
 
             # Transformando a lista de vizinhaça em um array
             k = 0
-            for q in range(R_v.shape[0]):
-                for w in range(R_v.shape[1]):
+            for i in range(R_v.shape[0]):
+                for j in range(R_v.shape[1]):
 
-                    R_v[q][w] = R_neighborhood[k]
-                    G_v[q][w] = G_neighborhood[k]
-                    B_v[q][w] = B_neighborhood[k]
+                    R_v[i][j] = R_neighborhood[k]
+                    G_v[i][j] = G_neighborhood[k]
+                    B_v[i][j] = B_neighborhood[k]
                     k += 1
 
             # Realizando o cálculo de correlação
@@ -119,8 +146,8 @@ class Correlation:
 
     def gToArray(self):
         try:
-            g_array = np.empty([self.num_rows_image - 2 * self.central_mask_pixel_i,
-                                self.num_columns_image - 2 * self.central_mask_pixel_j,
+            g_array = np.empty([self.num_rows_image,
+                                self.num_columns_image,
                                 3])
         except ValueError:
             print('Máscara maior que a imagem! image =',
@@ -128,6 +155,7 @@ class Correlation:
             exit()
 
         print(self.image.shape)
+        print(len(self.g))
         print(g_array.shape)
 
         k = 0
@@ -136,4 +164,4 @@ class Correlation:
                 g_array[i][j] = self.g[k]
                 k += 1
 
-        return g_array
+        return g_array.astype(np.uint8)

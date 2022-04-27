@@ -54,14 +54,9 @@ def YIQtoRGB(original_image):
             G = 1.000*Y - 0.272*I - 0.647*Q
             B = 1.000*Y - 1.106*I + 1.703*Q
 
-            R = round(R)
-            G = round(G)
-            B = round(B)
+            rgb_image[i][j] = [np.round(R), np.round(G), np.round(B)]
 
-            rgb_image[i][j] = [R, G, B]
-
-            # print(Y, I, Q)
-            # print(R, G, B)
+            rgb_image[i][j] = np.clip(rgb_image[i][j], 0, 255)
 
     return rgb_image.astype(np.uint8)
 
