@@ -141,6 +141,25 @@ class Correlation:
                 B_correlation_sum += np.inner(
                     B_v[v_index], self.mask[v_index])
 
+            # Não existe Edge
+            if (R_correlation_sum == 0):
+                R_correlation_sum = 0
+                G_correlation_sum = 0
+                B_correlation_sum = 0
+            if (R_correlation_sum < 0):
+                R_correlation_sum = abs(R_correlation_sum)
+                G_correlation_sum = abs(G_correlation_sum)
+                B_correlation_sum = abs(B_correlation_sum)
+            if (R_correlation_sum > 255):
+                R_correlation_sum = 255
+                G_correlation_sum = 255
+                B_correlation_sum = 255
+            # else:
+            #     # Se não for 0, possui uma edge
+            #     R_correlation_sum = 0
+            #     G_correlation_sum = 0
+            #     B_correlation_sum = 0
+            print([R_correlation_sum, G_correlation_sum, B_correlation_sum])
             self.g.append([round(R_correlation_sum), round(
                 G_correlation_sum), round(B_correlation_sum)])
 
