@@ -1,3 +1,6 @@
+# Convolução
+# convolution.py
+
 import numpy as np
 
 # example = np.array([

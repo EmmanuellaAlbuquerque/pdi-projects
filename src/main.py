@@ -69,14 +69,14 @@ original_image = io.imread(filename, plugin='pil', as_gray=True)
 # 3.
 
 # Carregando imagem de entrada
-# filename = os.path.join('', 'black-line-center.png')
+filename = os.path.join('', 'black-line-center.png')
 # filename = os.path.join('', 'yiq-test.png')
 # filename = os.path.join('', 'correlation_test.png')
 # filename = os.path.join('', 'julian.jpg')
 # filename = os.path.join('', 'boat.png')
 # filename = os.path.join('', 'lenna-bw.png')
 # filename = os.path.join('', 'sobel.png')
-filename = os.path.join('', 'einstein.png')
+# filename = os.path.join('', 'einstein.png')
 # filename = os.path.join('', '20191126093552.jpg')
 # filename = os.path.join('', 'chimney.png')
 # filename = os.path.join('', 'apple.png')
@@ -87,9 +87,9 @@ image = io.imread(filename, plugin='pil')
 # Black and White Array Format
 # grayscale_array_image = color.rgb2gray(image)
 
-# if (len(image.shape) != 3):
-#     print('Binary image')
-#     image = color.gray2rgb(image)
+if (len(image.shape) != 3):
+    print('Binary image')
+    image = color.gray2rgb(image)
 
 # print(image)
 # exit()
@@ -99,9 +99,9 @@ image = io.imread(filename, plugin='pil')
 # Filtro Box
 # box_mask = np.array([[1/9]*3]*3)
 # box_mask = np.array([[1/25]*5]*5)
-# box_mask = np.array([[1/49]*7]*7)
+box_mask = np.array([[1/49]*7]*7)
 # box_mask = np.array([[1/225]*15]*15)
-box_mask = np.array([[1/2401]*49]*49)
+# box_mask = np.array([[1/2401]*49]*49)
 
 sobel_mask_horizontal = np.array([
     [-1, -2, -1],
@@ -125,6 +125,16 @@ mask = sobel_mask_horizontal
 
 # pivot
 # def calculateCorrelation(image, mask, offset=0):
+
+# Testando a média RGB
+# correlation = Correlation(image, mask, filter_type='median')
+# g_array = correlation.calculate()
+
+# # Exibindo os resultados
+# show_result_plot({
+#     "Imagem Original": image,
+#     "Filtro Mediana nas bandas RGB": g_array
+# })
 
 
 # 4. Filtro mediana m x n, com m e n ímpares, sobre a banda Y do YIQ.
@@ -172,7 +182,9 @@ mask = sobel_mask_horizontal
 # print(image)
 # print(grayscale_array_image)
 
+# 3. COM EXPANSÃO E SEM EXPANSÃO
 
+print('Image Shape:', image.shape)
 grayscale_image = []
 grayscale_image_3d = np.empty([image.shape[0], image.shape[1], 3])
 
@@ -210,7 +222,7 @@ def T(r, image, L=256):
 grayscale_image_3d_expansion = np.empty([image.shape[0], image.shape[1], 3])
 grayscale_image_expansion = []
 
-print(np.min(grayscale_image_3d), np.max(grayscale_image_3d))
+# print(np.min(grayscale_image_3d), np.max(grayscale_image_3d))
 for i in range(grayscale_image_3d.shape[0]):
     for j in range(grayscale_image_3d.shape[1]):
 
@@ -220,13 +232,15 @@ for i in range(grayscale_image_3d.shape[0]):
         grayscale_image_expansion.append(S)
         grayscale_image_3d_expansion[i][j] = [S, S, S]
 
-print(np.min(grayscale_image_expansion), np.max(grayscale_image_expansion))
+# print(np.min(grayscale_image_expansion), np.max(grayscale_image_expansion))
 
 
-correlation_grayscale = Correlation(grayscale_image_3d, mask)
+correlation_grayscale = Correlation(
+    grayscale_image_3d, mask, filter_type='sobel')
 g_array_grayscale = correlation_grayscale.calculate()
 
-correlation_expansion = Correlation(grayscale_image_3d_expansion, mask)
+correlation_expansion = Correlation(
+    grayscale_image_3d_expansion, mask, filter_type='sobel')
 g_array_expansion = correlation_expansion.calculate()
 
 show_result_plot({

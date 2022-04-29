@@ -1,3 +1,6 @@
+# Reconstrução bilinear
+# image-reconstruction.py
+
 # f = (x, y)
 from math import ceil
 import numpy as np
