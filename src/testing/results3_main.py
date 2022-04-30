@@ -9,6 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from colorama import Fore, Style
 
+TYPE = 'GRAY'
+
 # 3. Correlação m x n sobre R, G e B.
 
 
@@ -30,12 +32,15 @@ def T(r, image, L=256):
 # filename = os.path.join('images/', 'black-line-center.png')
 # filename = os.path.join('images/', 'lenna-bw.png')
 # filename = os.path.join('images/', 'lenna.png')
-filename = os.path.join('images/', 'einstein.png')
+# filename = os.path.join('images/', 'einstein.png')
+# filename = os.path.join('images/', 'Woman.png')
+filename = os.path.join('images/', 'boat.png')
 
 image = io.imread(filename, plugin='pil')
 
 image_3d = np.empty([image.shape[0], image.shape[1], 3])
 if (len(image.shape) != 3):
+    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - GRAY")
     print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Binary Image Format Convertion!")
 
     for i in range(image_3d.shape[0]):
@@ -43,6 +48,8 @@ if (len(image.shape) != 3):
             image_3d[i][j] = [image[i][j], image[i][j], image[i][j]]
     image = image_3d
 else:
+    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - RGB")
+    TYPE = 'RGB'
     image_3d = image
 
 # -------------------- Definição da máscara usada --------------------
@@ -69,7 +76,7 @@ sobel_mask_vertical = np.array([
 ])
 
 # Máscara Atual
-mask = sobel_mask_vertical
+mask = sobel_mask_horizontal
 
 print('Image Shape:', image.shape)
 grayscale_image = []
@@ -79,6 +86,13 @@ grayscale_image_3d = image_3d
 for i in range(image.shape[0]):
     for j in range(image.shape[1]):
         [R, G, B] = image[i][j]
+
+        # Converte para GRAY
+        if (TYPE == 'RGB'):
+            gray_result = round((int(R) + int(G) + int(B))/3)
+
+            grayscale_image_3d[i][j] = [
+                gray_result, gray_result, gray_result]
 
         grayscale_image.append(R)
 
