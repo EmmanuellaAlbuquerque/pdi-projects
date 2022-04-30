@@ -1,7 +1,6 @@
 # Digital Image Processing Functions Module
 # dimgprocessing-module.py
 
-from skimage import io, data, color
 from matplotlib import pyplot as plt
 import numpy as np
 from colorama import Fore, Style
@@ -75,7 +74,8 @@ def negative(original_image, mode='rgb'):
     L = pow(2, 8)  # 256
 
     if (mode == 'yiq'):
-        print('Gerando Negativo somente na banda Y.')
+        print(
+            f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Gerando Negativo somente na banda Y.")
 
         num_rows = original_image.shape[0]
         num_columns = original_image.shape[1]
@@ -93,6 +93,8 @@ def negative(original_image, mode='rgb'):
 
         return yiq_negative_image
 
+    print(
+        f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Gerando Negativo RGB.")
     negative_image = (L - 1) - original_image
 
     return negative_image
