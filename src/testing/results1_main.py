@@ -1,5 +1,5 @@
 # Testing Module of Digital Image Processing Functions
-# testing-module1-main.py
+# results1_main.py
 
 from colorama import Fore, Style
 import numpy as np

@@ -122,3 +122,6 @@ plt.hist([grayscale_image, grayscale_image_expansion],
 
 plt.legend(loc='upper right')
 plt.show()
+
+# "Box Filter Image": g_array.astype(np.uint8)
+# "Filtro Média (Box) 49x49": g_array.astype(np.uint8)
