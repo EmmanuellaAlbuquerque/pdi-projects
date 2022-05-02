@@ -11,13 +11,16 @@ import os
 
 # Carregando imagem de entrada
 # filename = os.path.join('images/', 'testpat.1k.color.tif')
-filename = os.path.join('images/', 'mountains-house.png')
+# filename = os.path.join('images/', 'mountains-house.png')
+filename = os.path.join('images/', 'flower.jpeg')
 original_image = io.imread(filename, plugin='pil')
 
 # ------------------------ 1. Conversão RGB-YIQ-RGB ------------------------
 
 # Convertendo para o espaço de cores YIQ
 yiq_image = RGBtoYIQ(original_image)
+
+y_image = RGBtoYIQ(original_image, mode='y')
 
 # Convertendo de YIQ para RGB
 rgb_image = YIQtoRGB(yiq_image)
@@ -31,6 +34,7 @@ else:
 # Exibindo os resultados
 show_result_plot({
     "Imagem Original": original_image,
-    "Imagem YIQ (somente para própositos de teste)": yiq_image,
+    "Imagem YIQ (somente para propósitos de teste)": yiq_image,
+    "Imagem banda Y": y_image,
     "Imagem RGB": rgb_image
 })

@@ -34,23 +34,16 @@ def T(r, image, L=256):
 # filename = os.path.join('images/', 'lenna.png')
 # filename = os.path.join('images/', 'einstein.png')
 # filename = os.path.join('images/', 'Woman.png')
-filename = os.path.join('images/', 'boat.png')
+# filename = os.path.join('images/', 'boat.png')
+
+# Sobel Filter
+filename = os.path.join('images/', 'boat-in-river.jpeg')
+# filename = os.path.join('images/', 'green-plant.jpg')
+
+# Box Filter
+# filename = os.path.join('images/', 'julian.jpg')
 
 image = io.imread(filename, plugin='pil')
-
-image_3d = np.empty([image.shape[0], image.shape[1], 3])
-if (len(image.shape) != 3):
-    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - GRAY")
-    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Binary Image Format Convertion!")
-
-    for i in range(image_3d.shape[0]):
-        for j in range(image_3d.shape[1]):
-            image_3d[i][j] = [image[i][j], image[i][j], image[i][j]]
-    image = image_3d
-else:
-    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - RGB")
-    TYPE = 'RGB'
-    image_3d = image
 
 # -------------------- Definição da máscara usada --------------------
 
@@ -78,16 +71,41 @@ sobel_mask_vertical = np.array([
 # Máscara Atual
 mask = sobel_mask_horizontal
 
+# Box Filter
+# correlation = Correlation(image, mask)
+# g_array = correlation.calculate()
+
+# show_result_plot({
+#     "Imagem Original": image.astype(np.uint8),
+#     "Filtro Média (Box) 7x7": g_array.astype(np.uint8),
+# })
+# exit()
+
+# Sobel Filter
+image_3d = np.empty([image.shape[0], image.shape[1], 3])
+if (len(image.shape) != 3):
+    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - GRAY")
+    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Binary Image Format Convertion!")
+
+    for i in range(image_3d.shape[0]):
+        for j in range(image_3d.shape[1]):
+            image_3d[i][j] = [image[i][j], image[i][j], image[i][j]]
+    image = image_3d
+else:
+    print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - RGB")
+    TYPE = 'RGB'
+    image_3d = image
+
 print('Image Shape:', image.shape)
 grayscale_image = []
 grayscale_image_3d = image_3d
 
-# Color image to black and white converter
+print('creating without expansion arrays')
 for i in range(image.shape[0]):
     for j in range(image.shape[1]):
         [R, G, B] = image[i][j]
 
-        # Converte para GRAY
+        # Converte para GRAY Scale:
         if (TYPE == 'RGB'):
             gray_result = round((int(R) + int(G) + int(B))/3)
 
@@ -96,6 +114,7 @@ for i in range(image.shape[0]):
 
         grayscale_image.append(R)
 
+print('creating expansion arrays')
 grayscale_image_3d_expansion = np.empty([image.shape[0], image.shape[1], 3])
 grayscale_image_expansion = []
 
@@ -108,6 +127,7 @@ for i in range(grayscale_image_3d.shape[0]):
         grayscale_image_expansion.append(S)
         grayscale_image_3d_expansion[i][j] = [S, S, S]
 
+print('calculating correlation')
 # Correlação COM EXPANSÃO
 correlation_grayscale = Correlation(
     grayscale_image_3d, mask, filter_type='sobel')
@@ -136,6 +156,3 @@ plt.hist([grayscale_image, grayscale_image_expansion],
 
 plt.legend(loc='upper right')
 plt.show()
-
-# "Box Filter Image": g_array.astype(np.uint8)
-# "Filtro Média (Box) 49x49": g_array.astype(np.uint8)

@@ -14,9 +14,15 @@ from correlation import Correlation
 # Ruído Salt-and-Pepper
 # filename = os.path.join('images/', 'salt-and-pepper.png')
 # filename = os.path.join('images/', 'Woman.png')
-filename = os.path.join('images/', 'boat.png')
+# filename = os.path.join('images/', 'defective-pixels.png')
+filename = os.path.join('images/', 'apple.png')
+# filename = os.path.join('images/', 'color-factory-illuminated-wall.jpg')
 
 image = io.imread(filename, plugin='pil')
+
+# Remove (A) from RGBA images
+# image = image[..., :3]
+# print(image)
 
 # Filtro Box
 box_mask_3x3 = np.array([[1/9]*3]*3)

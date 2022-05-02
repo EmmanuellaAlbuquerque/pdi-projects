@@ -8,7 +8,9 @@ from dimgprocessing_module import RGBtoYIQ, YIQtoRGB, negative, show_result_plot
 # ------------------------ Setup initial configuration ------------------------
 
 # Carregando imagem de entrada
-filename = os.path.join('images/', 'apple.png')
+filename = os.path.join('images/', 'other-fruits-bowl.jpg')
+# filename = os.path.join('images/', 'positive-color.png')
+
 original_image = io.imread(filename, plugin='pil')
 
 # ------------------------ 2. Negativo ------------------------
