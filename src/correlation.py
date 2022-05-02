@@ -155,4 +155,8 @@ class Correlation:
                 g_array[i][j] = self.g[k]
                 k += 1
 
+        if (self.offset != 0):
+            g_array = g_array + self.offset
+            g_array = np.clip(g_array, 0, 255)
+
         return g_array.astype(np.uint8)
