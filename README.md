@@ -5,7 +5,7 @@
 ### Installing dependencies
 ```sh
 # inside root project folder
-~$ pip3 install virtualenv
+~$ sudo -H pip3 install virtualenv
 ~$ virtualenv pdi-env
 ~$ . pdi-env/bin/activate
 ~$ pip3 install -r requirements.txt
