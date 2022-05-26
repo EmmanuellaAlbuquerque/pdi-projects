@@ -4,7 +4,7 @@
 from skimage import io
 from os import path
 import numpy as np
-from math import sqrt, cos, pi
+from math import sqrt, cos, pi, pow
 from matplotlib import pyplot as plt
 from colorama import Fore, Style
 import time
@@ -41,6 +41,9 @@ def DCT1d(x):
     # ck test
     ck = sqrt(1/2) if k == 0 else 1
     X[k] = constant * ck * summation
+
+    # if (k == 0):
+    #   print('k=', k, 'n=', n, X[k])
 
   return X
 
@@ -129,6 +132,12 @@ filename = path.join('assets/images/', 'lena256.png')
 # filename = path.join('assets/images/', 'cosseno-vertical.png')
 I = io.imread(filename)
 
+# result = DCT1d(I[0])
+# print('result', result)
+# result2 = DCT1d(result)
+# print('result2', result2)
+# exit()
+
 # I = np.array([[11.53, 5.93, 2.15, 0.47, -0.54, 0.96, 3.69, 4.11],
 #              [-11.53, -5.93, -2.15, -0.47, 0.54, -0.96, -3.69, -4.11]])
 
@@ -170,7 +179,7 @@ for j in range(0, Xk.shape[1]):
 
 # print(Xk.round(2))
 
-print(Xk)
+# print(Xk)
 print(Xk.shape)
 
 # dc_value = Xk[0][0]
@@ -181,9 +190,9 @@ I_approximation = []
 # for row_index in range(0, Xk.shape[0]):
 # Xk.shape[0]*Xk.shape[1]
 # Resultado com somente 2 mil cossenos
-for n in range(0, round((Xk.shape[0]*Xk.shape[1])/2) - 30000):
-  print('n:', n)
-  print("\033c", end="")
+for n in range(0, round((Xk.shape[0]*Xk.shape[1])/2)):
+  # print('n:', n)
+  # print("\033c", end="")
   # # Retorna o índice do valor máximo
   # max_values = np.amax(np.absolute(Xk))
 
@@ -250,6 +259,34 @@ for index in range(0, len(I_approximation)):
 # for i in range(0, Xk.shape[0]):
 #   print(Xk[i])
 # --------------------------- Transformada DCT Inversa (IDCT) de X[k] ---------------------------
+
+# H - função de transferência do filtro
+# d(k,l) - é a distância euclidiana do coeficiente (k,l) até a origem
+# fc - é a distância de corte até a origem
+# n >= 1 é a ordem do filtro
+def lowPassButterworthFilter(d, fc, n, cut_off_frequency):
+
+  for k in range(0, d.shape[0]):
+    for l in range(0, d.shape[1]):
+
+      H = 1/(sqrt(1 + pow((d[k, l]/fc), 2*n) ))
+
+      # As frequências acima de FC (frequência de corte) 
+      # são eliminadas e as abaixo de FC passam pelo filtro  
+      if (H >= cut_off_frequency):
+        print('H:', H, 'fc:', fc)
+        d[k][l] = 0
+
+  return d
+
+Xk = lowPassButterworthFilter(Xk, 10, 1, 0.5)
+# show_result_plot({
+#   'Imagem de Entrada': get3dImageShape(I),
+#   'Imagem com DCT (Ida)': get3dImageShape(Xk),
+#   'Filtro Butterworth passa-baixas': get3dImageShape(lowPassButterworthFilter(Xk, 10, 1, 0.3))
+# })
+# exit()
+
 xn = np.empty([Xk.shape[0], Xk.shape[1]])
 
 # Imagem transformada linha a linha pela IDCT 1D
@@ -271,6 +308,9 @@ for j in range(0, xn.shape[1]):
 # for i in range(Xk.shape[0]):
 #   for j in range(Xk.shape[1]):
 #     Xk[i][j] = T(Xk[i][j], Xk)
+
+# Zerando nível DC
+Xk[0][0] = 0
 
 I = get3dImageShape(I)
 Xk = get3dImageShape(Xk)
