@@ -7,6 +7,7 @@ import numpy as np
 from math import sqrt, cos, pi
 from matplotlib import pyplot as plt
 from colorama import Fore, Style
+import time
 
 # X[k] - DCT
 def DCT1d(x):
@@ -39,12 +40,31 @@ def DCT1d(x):
     
     # ck test
     ck = sqrt(1/2) if k == 0 else 1
-    X[k] = round(constant * ck * summation, 2)
+    X[k] = constant * ck * summation
 
   return X
 
 
 # x[k] - IDCT
+def IDCT1d(X):
+
+  N = X.shape[0]
+  x = np.array([0.0]*N)
+
+  constant = sqrt(2/N)
+
+  for n in range(0, N):
+    summation = 0
+    for k in range(0, N):
+      # ck test
+      ck = sqrt(1/2) if k == 0 else 1
+
+      # x[n] 
+      summation += ck * X[k] * cos((2 * pi * k * n)/(2 * N) + (k * pi)/(2 * N))
+
+    x[n] = constant * summation
+  
+  return x
 
 def show_result_plot(images_dict):
 
@@ -109,7 +129,10 @@ filename = path.join('assets/images/', 'lena256.png')
 # filename = path.join('assets/images/', 'cosseno-vertical.png')
 I = io.imread(filename)
 
-print(I.shape)
+# I = np.array([[11.53, 5.93, 2.15, 0.47, -0.54, 0.96, 3.69, 4.11],
+#              [-11.53, -5.93, -2.15, -0.47, 0.54, -0.96, -3.69, -4.11]])
+
+# print(I.shape, 'entry:', I)
 
 # Remova banda Alpha das imagens
 # I = I[:,:,:3]
@@ -128,8 +151,11 @@ print(I.shape)
 # I = I_gray
 # print(I_gray.shape)
 # print(I_gray)
-
 # exit()
+
+start = time.time()
+
+# --------------------------- Transformada DCT de x[n] ---------------------------
 
 # Calcula a DCT 2D de I (imagem de entrada) através da Separabilidade
 Xk = np.empty([I.shape[0], I.shape[1]])
@@ -142,27 +168,119 @@ for i in range(0, I.shape[0]):
 for j in range(0, Xk.shape[1]):
   Xk[ :,j] = DCT1d(Xk[ :,j])
 
+# print(Xk.round(2))
 
-print('Nível DC:', Xk[0][0])
+print(Xk)
+print(Xk.shape)
+
+# dc_value = Xk[0][0]
 # Zerando nível DC
-Xk[0][0] = 0
+# Xk[0][0] = 0
+
+I_approximation = []
+# for row_index in range(0, Xk.shape[0]):
+# Xk.shape[0]*Xk.shape[1]
+# Resultado com somente 2 mil cossenos
+for n in range(0, round((Xk.shape[0]*Xk.shape[1])/2) - 30000):
+  print('n:', n)
+  print("\033c", end="")
+  # # Retorna o índice do valor máximo
+  # max_values = np.amax(np.absolute(Xk))
+
+  # # Retorna as coordenadas do índice de valor máximo
+  # ij = np.unravel_index(max_values, Xk.shape)
+
+  # coordinates = np.where(Xk == np.amax(Xk))
+  coordinates = np.where(np.absolute(Xk) == np.amax(np.absolute(Xk)))
+
+  i = coordinates[0][0]
+  j = coordinates[1][0]
+
+  I_approximation.append({
+    "i": i,
+    "j": j,
+    "value": Xk[i][j]
+  })
+
+  # print('ij:', i, j)
+
+  # print('Xk:', Xk[i][j])
+
+  Xk[i][j] = 0
+
+# print(I_approximation)
+
+Xk = np.zeros([Xk.shape[0], Xk.shape[1]])
+
+for index in range(0, len(I_approximation)):
+  i = I_approximation[index]['i']
+  j = I_approximation[index]['j']
+  value = I_approximation[index]['value']
+
+  Xk[i][j] = value
+
+# print(Xk[0][0])
+# print(Xk[0][1])
+# print(Xk[2][5])
+# print(Xk[0][3])
+# print(Xk[0][4])
+# print(Xk[1][1])
+# exit()
+# Xk[0][0] = dc_value
+
+  # print('i,j', i, j)
+  # print('=', Xk[i][j])
+
+  # if (i == 0 and j == 0):
+  #   print('Nível DC =', Xk[i][j])
+  # else:
+  #   Xk[i][j] = 0
+  
+  # print('(', x, y, ')')
+
+  # I_approximation.append(Xk[x][y])
+
+  # Xk[x][y] = 0
+
+# print(I_approximation)
+# exit()
+# print('------')
+# print(Xk)
+
+# for i in range(0, Xk.shape[0]):
+#   print(Xk[i])
+# --------------------------- Transformada DCT Inversa (IDCT) de X[k] ---------------------------
+xn = np.empty([Xk.shape[0], Xk.shape[1]])
+
+# Imagem transformada linha a linha pela IDCT 1D
+for i in range(0, Xk.shape[0]):
+  xn[i] = IDCT1d(Xk[i])
+
+# Imagem transformada coluna a coluna pela IDCT 1D
+for j in range(0, xn.shape[1]):
+  xn[ :,j] = IDCT1d(xn[ :,j])
+
+# print(xn)
 
 # Realiza o recorte entre [0, 255]
-Xk = np.clip(Xk, 0, 255)
+# Xk = np.clip(Xk, 0, 255)
 
-# Aplicando expansão de histograma
-# getImageHistogramExpansion
-# expansão de histograma para [0, 255]
-for i in range(Xk.shape[0]):
-  for j in range(Xk.shape[1]):
-    Xk[i][j] = T(Xk[i][j], Xk)
+# # Aplicando expansão de histograma
+# # getImageHistogramExpansion
+# # expansão de histograma para [0, 255]
+# for i in range(Xk.shape[0]):
+#   for j in range(Xk.shape[1]):
+#     Xk[i][j] = T(Xk[i][j], Xk)
 
 I = get3dImageShape(I)
 Xk = get3dImageShape(Xk)
+xn = get3dImageShape(xn)
+
+end = time.time()
+print('FULL DCT Execution Time:', round(end - start), 's')
 
 show_result_plot({
   'Imagem de Entrada': I,
-  'Imagem com Transformada Cosseno Discreta Aplicada': Xk
+  'Imagem com DCT (Ida)': Xk,
+  'Imagem com DCT (Volta)': xn
 })
-
-
