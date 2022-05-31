@@ -1,11 +1,14 @@
 # Funções para ajudar na exibição dos plots das imagens
-# image_plot.py
+# plot_config.py
 
 import numpy as np
 from matplotlib import pyplot as plt
 from colorama import Fore, Style
 import tkinter
 import matplotlib
+import sys
+from os import path
+from skimage import io
 
 matplotlib.use('TkAgg')
 
@@ -56,6 +59,29 @@ def get3dImageShape(I):
 
 def printResultStacktrace(color, msg, value):
     print(f"{color}{msg}:{Style.RESET_ALL} {value}")
+
+
+def getImageInputInfo():
+    # Image Argument
+    image_name = str(sys.argv[1].split('=')[1])
+
+    # Limpa terminal
+    print("\033c", end="")
+
+    filename = path.join('assets/images/', image_name)
+    I = io.imread(filename)
+
+    R = I.shape[0]
+    C = I.shape[1]
+    RxC = R*C
+    printResultStacktrace(Fore.GREEN, "Imagem de entrada", image_name)
+    printResultStacktrace(Fore.GREEN, "R (Número de linhas)", R)
+    printResultStacktrace(Fore.GREEN, "C (Número de colunas)", C)
+    printResultStacktrace(Fore.GREEN, "Tamanho da imagem RxC", RxC)
+
+    return {"Image": I, "RxC": RxC}
+
+
 # Remova banda Alpha das imagens
 # I = I[:,:,:3]
 

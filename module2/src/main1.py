@@ -6,29 +6,15 @@ from os import path
 import numpy as np
 from math import sqrt, pow
 import time
-from utils.image_plot import get3dImageShape, showResultPlot, printResultStacktrace
+from utils.plot_config import get3dImageShape, showResultPlot, printResultStacktrace, getImageInputInfo
 from utils.histogram_expansion import calculateHistogramExpansion
 from discrete_cosine_transform import DCT1d, IDCT1d, compressImage
 from colorama import Fore, Style
 import copy
-import sys
 
-# Image Argument 
-image_name = str(sys.argv[1].split('=')[1])
-
-# Limpa terminal
-print("\033c", end="")
-
-filename = path.join('assets/images/', image_name)
-I = io.imread(filename)
-
-R = I.shape[0]
-C = I.shape[1]
-RxC = R*C
-printResultStacktrace(Fore.GREEN, "Imagem de entrada", image_name)
-printResultStacktrace(Fore.GREEN, "R (Número de linhas)", R)
-printResultStacktrace(Fore.GREEN, "C (Número de colunas)", C)
-printResultStacktrace(Fore.GREEN, "Tamanho da imagem RxC", RxC)
+I_info = getImageInputInfo()
+I = I_info["Image"]
+RxC = I_info["RxC"]
 
 # O parâmetro n é um inteiro no intervalo [0, RxC-1].
 nCoefficients = int(input('Digite o número de coeficientes a serem preservados na imagem: '))

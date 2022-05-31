@@ -114,3 +114,21 @@ def compressImage(Xk, nCoefficients):
 
   return Xk
 
+# H - função de transferência do filtro
+# d(k,l) - é a distância euclidiana do coeficiente (k,l) até a origem
+# fc - é a distância de corte até a origem
+# n >= 1 é a ordem do filtro
+def lowPassButterworthFilter(d, fc, n, cut_off_frequency):
+
+  for k in range(0, d.shape[0]):
+    for l in range(0, d.shape[1]):
+
+      H = 1/(sqrt(1 + pow((d[k, l]/fc), 2*n) ))
+
+      # As frequências acima de FC (frequência de corte) 
+      # são eliminadas e as abaixo de FC passam pelo filtro  
+      if (H >= cut_off_frequency):
+        # print('H:', H, 'fc:', fc)
+        d[k][l] = 0
+
+  return d
