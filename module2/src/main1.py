@@ -35,19 +35,23 @@ print(f"{Fore.GREEN}Nível DC:{Style.RESET_ALL} {round(Xk[0][0], 2)}")
 
 # Resultado com somente 2 mil cossenos (metade)
 # nCoefficients = round((Xk.shape[0]*Xk.shape[1])/2)
-# Xk_compressed = compressImage(copy.deepcopy(Xk), nCoefficients)
+nCoefficients = round((Xk.shape[0]*Xk.shape[1])/2 - 20000)
+Xk_compressed = compressImage(copy.deepcopy(Xk), nCoefficients)
 
 # --------------------------- Transformada DCT Inversa (IDCT) de X[k] ---------------------------
 
 xn = np.empty([Xk.shape[0], Xk.shape[1]])
+xn_compressed = np.empty([Xk.shape[0], Xk.shape[1]])
 
 # Imagem transformada linha a linha pela IDCT 1D
 for i in range(0, Xk.shape[0]):
   xn[i] = IDCT1d(Xk[i])
+  xn_compressed[i] = IDCT1d(Xk_compressed[i])
 
 # Imagem transformada coluna a coluna pela IDCT 1D
 for j in range(0, xn.shape[1]):
   xn[ :,j] = IDCT1d(xn[ :,j])
+  xn_compressed[ :,j] = IDCT1d(xn_compressed[ :,j])
 
 # Realiza o recorte entre [0, 255]
 # Xk = np.clip(Xk, 0, 255)
@@ -63,8 +67,9 @@ Xk[0][0] = 0
 
 I = get3dImageShape(I)
 Xk = get3dImageShape(Xk)
-# Xk_compressed = get3dImageShape(Xk_compressed)
+Xk_compressed = get3dImageShape(Xk_compressed)
 xn = get3dImageShape(xn)
+xn_compressed = get3dImageShape(xn_compressed)
 
 end = time.time()
 print('FULL DCT Execution Time:', round(end - start), 's')
@@ -72,6 +77,7 @@ print('FULL DCT Execution Time:', round(end - start), 's')
 showResultPlot({
   'Imagem de Entrada': I,
   'DCT (sem nível DC)': Xk,
-  # 'Aproximação de I (comprimido)': Xk_compressed,
-  'IDCT (Volta)': xn
+  f'Aproximação de I com {nCoefficients} coeficientes': Xk_compressed,
+  'IDCT (Volta)': xn,
+  f'IDCT com {nCoefficients} coeficientes': xn_compressed
 })

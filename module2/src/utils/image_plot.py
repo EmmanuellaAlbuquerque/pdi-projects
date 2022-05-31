@@ -4,6 +4,10 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from colorama import Fore, Style
+import tkinter
+import matplotlib
+
+matplotlib.use('TkAgg')
 
 def showResultPlot(images_dict):
 
