@@ -10,11 +10,9 @@
 ~$ . pdi-env/bin/activate
 ~$ pip3 install -r requirements.txt
 ```
-
 ### Running the project
 ```sh
-# inside src folder
-~$ python3 main.py
+# instructions inside the modules
 ```
 
 ### Updating requirements.txt
