@@ -42,8 +42,8 @@ def get3dImageShape(I):
   image_3d = np.empty([I.shape[0], I.shape[1], 3])
 
   if (len(I.shape) != 3):
-      print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - GRAY")
-      print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Binary Image Format Convertion!")
+    #   print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - GRAY")
+    #   print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Binary Image Format Convertion!")
 
       for i in range(image_3d.shape[0]):
           for j in range(image_3d.shape[1]):
@@ -51,10 +51,11 @@ def get3dImageShape(I):
 
       return image_3d.astype(np.uint8)
   else:
-      print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - RGB")
+    #   print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - RGB")
       return I
 
-
+def printResultStacktrace(color, msg, value):
+    print(f"{color}{msg}:{Style.RESET_ALL} {value}")
 # Remova banda Alpha das imagens
 # I = I[:,:,:3]
 

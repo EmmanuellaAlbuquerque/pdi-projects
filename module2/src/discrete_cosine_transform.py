@@ -83,7 +83,7 @@ def compressImage(Xk, nCoefficients):
 
   I_approximation = []
 
-  for n in range(0, nCoefficients):
+  for n in range(0, nCoefficients+1):
     # print('n:', n)
     # print("\033c", end="")
 
