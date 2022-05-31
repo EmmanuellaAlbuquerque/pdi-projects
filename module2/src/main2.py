@@ -1,13 +1,9 @@
 # 1.
 # main2.py
 
-from skimage import io
-from os import path
 import numpy as np
-from math import sqrt, pow
 import time
 from utils.plot_config import get3dImageShape, showResultPlot, getImageInputInfo
-from utils.histogram_expansion import calculateHistogramExpansion
 from discrete_cosine_transform import DCT1d, IDCT1d, lowPassButterworthFilter
 
 I_info = getImageInputInfo()
@@ -35,8 +31,12 @@ for j in range(0, Xk.shape[1]):
 # d(k,l) - é a distância euclidiana do coeficiente (k,l) até a origem
 # fc - é a distância de corte até a origem
 # n >= 1 é a ordem do filtro
-# d, fc, n, cut_off_frequency
-Xk = lowPassButterworthFilter(Xk, 10, 1, 0.5)
+
+fc = float(input('Digite (fc) a distância de corte até a origem: '))
+n = int(input('Digite (n) a ordem do filtro, [n >= 1]: '))
+
+# d(Imagem no domínio da frequência), fc, n, cut_off_frequency
+Xk = lowPassButterworthFilter(Xk, fc, n)
 
 # --------------------------- Transformada DCT Inversa (IDCT) de X[k] ---------------------------
 
@@ -59,6 +59,6 @@ print('FULL DCT Execution Time:', round(end - start), 's')
 
 showResultPlot({
   'Imagem de Entrada': I,
-  'Imagem com filtro Butterworth passa-baixas': Xk,
+  f'Imagem com filtro Butterworth passa-baixas n={n}': Xk,
   'Imagem com DCT (Volta)': xn
 })
