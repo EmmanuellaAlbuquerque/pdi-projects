@@ -124,18 +124,28 @@ def lowPassButterworthFilter(d, fc, n):
   for k in range(0, d.shape[0]):
     for l in range(0, d.shape[1]):
 
-      H = 1/(sqrt(1 + pow((d[k, l]/fc), 2*n) ))
-
-      # As frequências acima de FC (frequência de corte) 
-      # são eliminadas e as abaixo de FC passam pelo filtro  
+      H = 1/(sqrt(1 + pow((d[k, l]/fc), 2*n) ))  
       
       # passa altas
-      # if (H <= fc):
+      # if (H <= 1/2):
       if (H >= 1/2):
         count += 1
         d[k][l] = 0
-
-  print('Count:', count) 
     
   return d
 
+def lowPassButterworthFilterAudio(f, fc, n):
+
+  count = 0
+  for k in range(0, f.shape[0]):
+
+      H = 1/(sqrt(1 + pow((f[k]/fc), 2*n) ))  
+      
+      # passa altas
+      # if (H <= 1/2):
+      if (H >= 1/2):
+        count += 1
+        f[k] = 0
+    
+  print(count)
+  return f

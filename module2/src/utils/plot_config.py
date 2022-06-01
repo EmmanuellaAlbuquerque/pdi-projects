@@ -9,6 +9,7 @@ import matplotlib
 import sys
 from os import path
 from skimage import io
+from scipy.io import wavfile
 
 matplotlib.use('TkAgg')
 
@@ -80,6 +81,25 @@ def getImageInputInfo():
     printResultStacktrace(Fore.GREEN, "Tamanho da imagem RxC", RxC)
 
     return {"Image": I, "RxC": RxC}
+
+def getAudioInputInfo():
+    # Audio Argument
+    audio_name = str(sys.argv[1].split('=')[1])
+
+    # Limpa terminal
+    print("\033c", end="")
+
+    filename = path.join('assets/audios/', audio_name)
+
+    samplerate, audio = wavfile.read(filename)
+
+    signal_size = audio.shape[0]
+
+    printResultStacktrace(Fore.GREEN, "Aúdio de entrada", audio_name)
+    printResultStacktrace(Fore.GREEN, "Sample rate do audio", samplerate)
+    printResultStacktrace(Fore.GREEN, "Tamanho do sinal de entrada", signal_size)
+
+    return {"audio": audio, "size": signal_size}
 
 
 # Remova banda Alpha das imagens
