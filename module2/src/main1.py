@@ -4,7 +4,7 @@
 from skimage import io
 from os import path
 import numpy as np
-from math import sqrt, pow
+from math import sqrt, pow, log
 import time
 from utils.plot_config import get3dImageShape, showResultPlot, printResultStacktrace, getImageInputInfo
 from utils.histogram_expansion import calculateHistogramExpansion
@@ -60,18 +60,27 @@ for j in range(0, xn.shape[1]):
 # Realiza o recorte entre [0, 255]
 # Xk = np.clip(Xk, 0, 255)
 
-printResultStacktrace(Fore.YELLOW, "Expansão de histograma", "")
-# Aplicando expansão de histograma
-# expansão de histograma para [0, 255]
-for i in range(Xk.shape[0]):
-  for j in range(Xk.shape[1]):
-    Xk[i][j] = calculateHistogramExpansion(Xk[i][j], Xk)
-
 # Zerando nível DC
 Xk[0][0] = 0
 
+# Imagem para visualização
+# Ajuste fino para exibição pós DCT (módulo normalizado)
+Xk = np.absolute(Xk)
+Xk_expanded = np.empty([Xk.shape[0], Xk.shape[1]])
+
+printResultStacktrace(Fore.YELLOW, "Expansão de histograma", "")
+# Aplicando expansão de histograma
+# expansão de histograma para [0, 255]
+for i in range(0, Xk.shape[0]):
+  for j in range(0, Xk.shape[1]):
+    Xk_expanded[i][j] = calculateHistogramExpansion(Xk[i][j], Xk)
+
+# Zerando nível DC
+# Xk[0][0] = 0
+
 I = get3dImageShape(I)
 Xk = get3dImageShape(Xk)
+Xk_expanded = get3dImageShape(Xk_expanded)
 Xk_compressed = get3dImageShape(Xk_compressed)
 xn = get3dImageShape(xn)
 xn_compressed = get3dImageShape(xn_compressed)
@@ -81,7 +90,7 @@ print('FULL DCT Execution Time:', round(end - start), 's')
 
 showResultPlot({
   'Imagem de Entrada': I,
-  'DCT (sem nível DC)': Xk,
+  'DCT (sem nível DC)': Xk_expanded,
   f'Aproximação de I com {nCoefficients+1} coeficientes': Xk_compressed,
   'IDCT (Volta)': xn,
   f'IDCT com {nCoefficients+1} coeficientes': xn_compressed
