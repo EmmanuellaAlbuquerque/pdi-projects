@@ -57,41 +57,46 @@ for j in range(0, xn.shape[1]):
   xn[ :,j] = IDCT1d(xn[ :,j])
   xn_compressed[ :,j] = IDCT1d(xn_compressed[ :,j])
 
-# Realiza o recorte entre [0, 255]
-# Xk = np.clip(Xk, 0, 255)
-
+# --------------------------- Configurando DCT para visualização ---------------------------
 # Zerando nível DC
 Xk[0][0] = 0
 
-# Imagem para visualização
 # Ajuste fino para exibição pós DCT (módulo normalizado)
 Xk = np.absolute(Xk)
+
+# log(|DCT|+1) normalizado
+Xk_log = np.empty([Xk.shape[0], Xk.shape[1]])
+Xk_compressed_log = np.empty([Xk.shape[0], Xk.shape[1]])
+for i in range(0, Xk.shape[0]):
+  for j in range(0, Xk.shape[1]):
+    Xk_log[i][j] = log(abs(Xk[i][j]) + 1)
+    Xk_compressed_log[i][j] = log(abs(Xk_compressed[i][j]) + 1)
+
+# DCT de visualização sem nível DC
 Xk_expanded = np.empty([Xk.shape[0], Xk.shape[1]])
 
+# DCT de visualização log(|DCT|+1)
+Xk_log_expanded = np.empty([Xk.shape[0], Xk.shape[1]])
+Xk_compressed_log_expanded = np.empty([Xk.shape[0], Xk.shape[1]])
+
 printResultStacktrace(Fore.YELLOW, "Expansão de histograma", "")
-# Aplicando expansão de histograma
-# expansão de histograma para [0, 255]
+
+# Aplicando expansão de histograma para [0, 255]
 for i in range(0, Xk.shape[0]):
   for j in range(0, Xk.shape[1]):
     Xk_expanded[i][j] = calculateHistogramExpansion(Xk[i][j], Xk)
 
-# Zerando nível DC
-# Xk[0][0] = 0
-
-I = get3dImageShape(I)
-Xk = get3dImageShape(Xk)
-Xk_expanded = get3dImageShape(Xk_expanded)
-Xk_compressed = get3dImageShape(Xk_compressed)
-xn = get3dImageShape(xn)
-xn_compressed = get3dImageShape(xn_compressed)
+    Xk_log_expanded[i][j] = calculateHistogramExpansion(Xk_log[i][j], Xk_log)
+    Xk_compressed_log_expanded[i][j] = calculateHistogramExpansion(Xk_compressed_log[i][j], Xk_compressed_log)
 
 end = time.time()
 print('FULL DCT Execution Time:', round(end - start), 's')
 
 showResultPlot({
-  'Imagem de Entrada': I,
-  'DCT (sem nível DC)': Xk_expanded,
-  f'Aproximação de I com {nCoefficients+1} coeficientes': Xk_compressed,
-  'IDCT (Volta)': xn,
-  f'IDCT com {nCoefficients+1} coeficientes': xn_compressed
+  'Imagem de Entrada': get3dImageShape(I),
+  'DCT (sem nível DC)': get3dImageShape(Xk_expanded),
+  'log(|DCT|+1) normalizado': get3dImageShape(Xk_log_expanded),
+  f'log(|DCT|+1) com {nCoefficients+1} coeficientes': get3dImageShape(Xk_compressed_log_expanded),
+  # '(Volta)': get3dImageShape(xn),
+  f'Imagem de Saída': get3dImageShape(xn_compressed)
 })
