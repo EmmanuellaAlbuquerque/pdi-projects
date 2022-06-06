@@ -4,7 +4,7 @@
 import numpy as np
 import time
 from utils.plot_config import get3dImageShape, showResultPlot, getAudioInputInfo, setAudioOutputInfo, printResultStacktrace
-from discrete_cosine_transform import DCT1d, IDCT1d, lowPassButterworthFilterAudio, lowPassButterworthFilterAudio2
+from discrete_cosine_transform import DCT1d, IDCT1d, lowPassButterworthFilterAudio
 from colorama import Fore, Style
 
 # sinal s, em formato .wav
@@ -38,23 +38,16 @@ for k in range(0, audio_size):
     f[k] = k * f1
 
 # aplicando o filtro Butterworth passa-baixas no domínio da frequência.
-Xk = lowPassButterworthFilterAudio(f, fc, n)
+Xk = lowPassButterworthFilterAudio(f, fc, n, Xk)
 
 setAudioOutputInfo(Xk, 'Xk-output')
 
-# 2
-Xk2 = lowPassButterworthFilterAudio2(f, fc, n, Xk)
-
-setAudioOutputInfo(Xk2, 'Xk-output2')
-
 # --------------------------- Transformada IDCT de X[k] ---------------------------
 printResultStacktrace(Fore.YELLOW, "IDCT", "")
+
 # Calcula a IDCT 1D
 output = IDCT1d(Xk)
 setAudioOutputInfo(output, 'output')
-
-output2 = IDCT1d(Xk2)
-setAudioOutputInfo(output2, 'output2')
 
 end = time.time()
 print('FULL DCT Execution Time:', round(end - start), 's')

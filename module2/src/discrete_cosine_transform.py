@@ -139,26 +139,13 @@ def lowPassButterworthFilter(d, fc, n, Xk):
     
   return Xk
 
-def lowPassButterworthFilterAudio(f, fc, n):
-
-  for k in range(0, f.shape[0]):
-
-      H = 1/(sqrt(1 + pow((f[k]/fc), 2*n) ))  
-      
-      # passa altas
-      # if (H <= 1/2):
-      if (H >= 1/2):
-        f[k] = 0
-
-  return f
-
-def lowPassButterworthFilterAudio2(f, fc, n, Xk):
+def lowPassButterworthFilterAudio(f, fc, n, Xk):
 
   for k in range(0, f.shape[0]):
 
       H = 1/(sqrt(1 + pow((f[k]/fc), 2*n) ))  
 
-      Xk[k] = H * Xk[k]      
+      Xk[k] = H * Xk[k]
       # passa altas
       # if (H <= 1/2):
       # if (H >= 1/2):

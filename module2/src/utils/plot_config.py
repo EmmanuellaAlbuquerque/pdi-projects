@@ -106,7 +106,8 @@ def getAudioInputInfo():
 def setAudioOutputInfo(audio, filename):
     
     samplerate = 44100
-    write(f'assets/audios/{filename}.wav', samplerate, audio.astype(np.int16))
+    write(f'assets/audios/{filename}_typeint16.wav', samplerate, audio.astype(np.int16))
+    write(f'assets/audios/{filename}.wav', samplerate, audio)
 
 # Remova banda Alpha das imagens
 # I = I[:,:,:3]

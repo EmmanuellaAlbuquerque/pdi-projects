@@ -60,15 +60,11 @@ for i in range(0, Xk.shape[0]):
 for j in range(0, xn.shape[1]):
   xn[ :,j] = IDCT1d(xn[ :,j])
 
-I = get3dImageShape(I)
-Xk = get3dImageShape(Xk)
-xn = get3dImageShape(xn)
-
 end = time.time()
 print('FULL DCT Execution Time:', round(end - start), 's')
 
 showResultPlot({
-  'Imagem de Entrada': I,
-  f'Imagem com filtro Butterworth passa-baixas n={n}': Xk,
-  'Imagem com DCT (Volta)': xn
+  'Imagem de Entrada': get3dImageShape(I),
+  f'Imagem com filtro Butterworth passa-baixas n={n}': get3dImageShape(Xk),
+  'Imagem com DCT (Volta)': get3dImageShape(xn)
 })
