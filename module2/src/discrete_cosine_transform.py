@@ -118,25 +118,29 @@ def compressImage(Xk, nCoefficients):
 # d(k,l) - é a distância euclidiana do coeficiente (k,l) até a origem
 # fc - é a distância de corte até a origem
 # n >= 1 é a ordem do filtro
-def lowPassButterworthFilter(d, fc, n):
+def lowPassButterworthFilter(d, fc, n, Xk):
 
-  count = 0
   for k in range(0, d.shape[0]):
     for l in range(0, d.shape[1]):
 
-      H = 1/(sqrt(1 + pow((d[k, l]/fc), 2*n) ))  
+      H = 1/(sqrt(1 + pow((d[k, l]/fc), 2*n) ))
+
+      # Passa Alta
+      # H = 1/(sqrt(1 + pow((fc/(d[k, l])), 2*n) ))
+      # print(H)
       
+      Xk[k][l] = H * Xk[k][l]
+
       # passa altas
       # if (H <= 1/2):
-      if (H >= 1/2):
-        count += 1
-        d[k][l] = 0
+      # if (H >= 1/2):
+        # d[k][l] = 0
+        # Xk[k][l] = 0
     
-  return d
+  return Xk
 
 def lowPassButterworthFilterAudio(f, fc, n):
 
-  count = 0
   for k in range(0, f.shape[0]):
 
       H = 1/(sqrt(1 + pow((f[k]/fc), 2*n) ))  
@@ -144,8 +148,20 @@ def lowPassButterworthFilterAudio(f, fc, n):
       # passa altas
       # if (H <= 1/2):
       if (H >= 1/2):
-        count += 1
         f[k] = 0
-    
-  print(count)
+
   return f
+
+def lowPassButterworthFilterAudio2(f, fc, n, Xk):
+
+  for k in range(0, f.shape[0]):
+
+      H = 1/(sqrt(1 + pow((f[k]/fc), 2*n) ))  
+
+      Xk[k] = H * Xk[k]      
+      # passa altas
+      # if (H <= 1/2):
+      # if (H >= 1/2):
+      #   f[k] = 0
+
+  return Xk

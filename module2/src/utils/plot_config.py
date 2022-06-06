@@ -10,6 +10,7 @@ import sys
 from os import path
 from skimage import io
 from scipy.io import wavfile
+from scipy.io.wavfile import write
 
 matplotlib.use('TkAgg')
 
@@ -56,7 +57,7 @@ def get3dImageShape(I):
       return image_3d.astype(np.uint8)
   else:
     #   print(f"{Fore.YELLOW}ALERT:{Style.RESET_ALL} Image TYPE - RGB")
-      return I
+      return I.astype(np.uint8)
 
 def printResultStacktrace(color, msg, value):
     print(f"{color}{msg}:{Style.RESET_ALL} {value}")
@@ -80,7 +81,7 @@ def getImageInputInfo():
     printResultStacktrace(Fore.GREEN, "C (Número de colunas)", C)
     printResultStacktrace(Fore.GREEN, "Tamanho da imagem RxC", RxC)
 
-    return {"Image": I, "RxC": RxC}
+    return {"Image": I, "RxC": RxC, "R": R, "C": C}
 
 def getAudioInputInfo():
     # Audio Argument
@@ -101,6 +102,11 @@ def getAudioInputInfo():
 
     return {"audio": audio, "size": signal_size}
 
+
+def setAudioOutputInfo(audio, filename):
+    
+    samplerate = 44100
+    write(f'assets/audios/{filename}.wav', samplerate, audio.astype(np.int16))
 
 # Remova banda Alpha das imagens
 # I = I[:,:,:3]

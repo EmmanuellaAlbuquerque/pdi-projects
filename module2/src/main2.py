@@ -3,13 +3,20 @@
 
 import numpy as np
 import time
+from math import sqrt, dist
 from utils.plot_config import get3dImageShape, showResultPlot, getImageInputInfo
 from discrete_cosine_transform import DCT1d, IDCT1d, lowPassButterworthFilter
 
 I_info = getImageInputInfo()
 I = I_info["Image"]
+R = I_info["R"]
+C = I_info["C"]
 
 start = time.time()
+
+# Obtendo dados para aplicação do filtro Butterworth
+fc = float(input('Digite (fc) a distância de corte até a origem: '))
+n = int(input('Digite (n) a ordem do filtro, [n >= 1]: '))
 
 # --------------------------- Transformada DCT de x[n] ---------------------------
 
@@ -32,11 +39,14 @@ for j in range(0, Xk.shape[1]):
 # fc - é a distância de corte até a origem
 # n >= 1 é a ordem do filtro
 
-fc = float(input('Digite (fc) a distância de corte até a origem: '))
-n = int(input('Digite (n) a ordem do filtro, [n >= 1]: '))
+# distância euclidiana do coeficiente (k,l) até a origem
+D = np.zeros([I.shape[0], I.shape[1]])
+for u in range(0, R):
+  for v in range(0, C):
+    D[u][v] = sqrt(pow(u, 2) + pow(v, 2))
 
 # d(Imagem no domínio da frequência), fc, n, cut_off_frequency
-Xk = lowPassButterworthFilter(Xk, fc, n)
+Xk = lowPassButterworthFilter(D, fc, n, Xk)
 
 # --------------------------- Transformada DCT Inversa (IDCT) de X[k] ---------------------------
 
