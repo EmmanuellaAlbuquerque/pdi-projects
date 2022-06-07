@@ -4,8 +4,9 @@
 import numpy as np
 import time
 from math import sqrt, dist
-from utils.plot_config import get3dImageShape, showResultPlot, getImageInputInfo
+from utils.plot_config import get3dImageShape, showResultPlot, getImageInputInfo, printResultStacktrace
 from discrete_cosine_transform import DCT1d, IDCT1d, lowPassButterworthFilter
+from colorama import Fore, Style
 
 I_info = getImageInputInfo()
 I = I_info["Image"]
@@ -19,6 +20,7 @@ fc = float(input('Digite (fc) a distância de corte até a origem: '))
 n = int(input('Digite (n) a ordem do filtro, [n >= 1]: '))
 
 # --------------------------- Transformada DCT de x[n] ---------------------------
+printResultStacktrace(Fore.YELLOW, "DCT", "")
 
 # Calcula a DCT 2D de I (imagem de entrada) através da Separabilidade
 Xk = np.empty([I.shape[0], I.shape[1]])
@@ -32,6 +34,7 @@ for j in range(0, Xk.shape[1]):
   Xk[ :,j] = DCT1d(Xk[ :,j])
 
 # --------------------------- Aplicando filtro Butterworth ---------------------------
+printResultStacktrace(Fore.YELLOW, "Aplicação Filtro Butterworth", "")
 
 # aplicando o filtro Butterworth passa-baixas no domínio da frequência.
 # H - função de transferência do filtro
@@ -49,6 +52,7 @@ for u in range(0, R):
 Xk = lowPassButterworthFilter(D, fc, n, Xk)
 
 # --------------------------- Transformada DCT Inversa (IDCT) de X[k] ---------------------------
+printResultStacktrace(Fore.YELLOW, "IDCT", "")
 
 xn = np.empty([Xk.shape[0], Xk.shape[1]])
 
@@ -66,5 +70,5 @@ print('FULL DCT Execution Time:', round(end - start), 's')
 showResultPlot({
   'Imagem de Entrada': get3dImageShape(I),
   f'Imagem com filtro Butterworth passa-baixas n={n}': get3dImageShape(Xk),
-  'Imagem com DCT (Volta)': get3dImageShape(xn)
+  'Imagem de Saída': get3dImageShape(xn)
 })
