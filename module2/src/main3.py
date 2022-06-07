@@ -15,7 +15,7 @@ audio_size = audio_info["size"]
 
 hour = datetime.now().time().hour
 minute = datetime.now().time().minute
-print(">", str(hour) +  ':' + str(minute))
+print("Start at >", str(hour) +  ':' + str(minute))
 
 # (fa = samplerate) frequência da amostragem
 fa = audio_info["fa"]
@@ -37,16 +37,14 @@ printResultStacktrace(Fore.YELLOW, "Aplicação Filtro Butterworth", "")
 f = np.empty([audio_size])
 
 # f1, frequência fundamental a partir da qual todas as demais se formam 
+f1 = (fa / (2 * (audio_size - 1)))
 
 # Calculando as frequências em Hz
 for k in range(0, audio_size):
-    f1 = (fa / (2 * (audio_size - 1))) # colocar pra fora fo for
     f[k] = k * f1
 
 # aplicando o filtro Butterworth passa-baixas no domínio da frequência.
 Xk = lowPassButterworthFilterAudio(f, fc, n, Xk)
-
-setAudioOutputInfo(Xk, 'Xk-output', fc, n)
 
 # --------------------------- Transformada IDCT de X[k] ---------------------------
 printResultStacktrace(Fore.YELLOW, "IDCT", "")
@@ -57,22 +55,3 @@ setAudioOutputInfo(output, 'output', fc, n)
 
 end = time.time()
 print('FULL DCT Execution Time:', round(end - start), 's')
-
-exit()
-# Exibir em forma de imagem *remover*
-audio = np.array([audio])
-Xk = np.array([Xk])
-output = np.array([output])
-
-audio = get3dImageShape(audio)
-Xk = get3dImageShape(Xk)
-output = get3dImageShape(output)
-
-end = time.time()
-print('FULL DCT Execution Time:', round(end - start), 's')
-
-showResultPlot({
-  'Imagem de Entrada': audio,
-  f'Imagem com filtro Butterworth passa-baixas n={n}': Xk,
-  'Saída': output
-})
