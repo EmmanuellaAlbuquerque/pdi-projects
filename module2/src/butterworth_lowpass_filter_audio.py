@@ -1,5 +1,5 @@
 # 1.
-# main2.py
+# butterworth_lowpass_filter_audio.py
 
 import numpy as np
 import time
@@ -24,7 +24,11 @@ start = time.time()
 
 # Obtendo dados para aplicação do filtro Butterworth
 fc = float(input('Digite (fc) a distância de corte até a origem: '))
-n = int(input('Digite (n) a ordem do filtro, [n >= 1]: '))
+n = int(input('Digite (n) a ordem do filtro, [n > 1]: '))
+
+if (not (n > 1)):
+  print("A ordem do filtro (n) deve ser n > 1")
+  exit()
 
 # --------------------------- Transformada DCT de x[n] ---------------------------
 printResultStacktrace(Fore.YELLOW, "DCT", "")

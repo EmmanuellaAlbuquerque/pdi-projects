@@ -1,5 +1,5 @@
 # 1.
-# main1.py
+# best_ACs_coefficients.py
 
 from skimage import io
 from os import path
@@ -21,6 +21,7 @@ nCoefficients = int(input('Digite o número de coeficientes a serem preservados 
 
 if (not (nCoefficients >= 0 and nCoefficients <= RxC - 1)):
   print("O número de coeficientes(n), deve estar entre o intervalo [0, RxC-1]")
+  exit()
 
 start = time.time()
 

@@ -1,11 +1,11 @@
 # 1.
-# main2.py
+# butterworth_lowpass_filter_image.py
 
 import numpy as np
 import time
 from math import sqrt, dist
 from utils.plot_config import get3dImageShape, showResultPlot, getImageInputInfo, printResultStacktrace
-from discrete_cosine_transform import DCT1d, IDCT1d, lowPassButterworthFilter
+from discrete_cosine_transform import DCT1d, IDCT1d, lowPassButterworthFilterImage
 from colorama import Fore, Style
 
 I_info = getImageInputInfo()
@@ -18,6 +18,10 @@ start = time.time()
 # Obtendo dados para aplicação do filtro Butterworth
 fc = float(input('Digite (fc) a distância de corte até a origem: '))
 n = int(input('Digite (n) a ordem do filtro, [n >= 1]: '))
+
+if (not (n >= 1)):
+  print("A ordem do filtro (n) deve ser n >= 1")
+  exit()
 
 # --------------------------- Transformada DCT de x[n] ---------------------------
 printResultStacktrace(Fore.YELLOW, "DCT", "")
@@ -49,7 +53,7 @@ for u in range(0, R):
     D[u][v] = sqrt(pow(u, 2) + pow(v, 2))
 
 # d(Imagem no domínio da frequência), fc, n, cut_off_frequency
-Xk = lowPassButterworthFilter(D, fc, n, Xk)
+Xk = lowPassButterworthFilterImage(D, fc, n, Xk)
 
 # --------------------------- Transformada DCT Inversa (IDCT) de X[k] ---------------------------
 printResultStacktrace(Fore.YELLOW, "IDCT", "")

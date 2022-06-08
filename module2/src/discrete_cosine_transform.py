@@ -118,7 +118,7 @@ def compressImage(Xk, nCoefficients):
 # d(k,l) - é a distância euclidiana do coeficiente (k,l) até a origem
 # fc - é a distância de corte até a origem
 # n >= 1 é a ordem do filtro
-def lowPassButterworthFilter(d, fc, n, Xk):
+def lowPassButterworthFilterImage(d, fc, n, Xk):
 
   for k in range(0, d.shape[0]):
     for l in range(0, d.shape[1]):
@@ -129,6 +129,9 @@ def lowPassButterworthFilter(d, fc, n, Xk):
 
   return Xk
 
+# f é a frequência em Hz
+# fc é a frequência de corte em Hz
+# n > 1 é a ordem do filtro
 def lowPassButterworthFilterAudio(f, fc, n, Xk):
 
   for k in range(0, f.shape[0]):
