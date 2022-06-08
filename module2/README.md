@@ -9,5 +9,5 @@
 ~$ python3 butterworth_lowpass_filter_image.py image=lena256.png
 
 # 3.
-~$ python3 butterworth_lowpass_filter_audio.py audio=MaisUmaSemana.wa
+~$ python3 butterworth_lowpass_filter_audio.py audio=MaisUmaSemana.wav
 ```
